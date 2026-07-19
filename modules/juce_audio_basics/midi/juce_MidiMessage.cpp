@@ -333,10 +333,17 @@ MidiMessage::MidiMessage (MidiMessage&& other) noexcept
 
 MidiMessage& MidiMessage::operator= (MidiMessage&& other) noexcept
 {
-    packedData.allocatedData = other.packedData.allocatedData;
-    timeStamp = other.timeStamp;
-    size = other.size;
-    other.size = 0;
+    if (this != &other)
+    {
+        if (isHeapAllocated())
+            std::free (packedData.allocatedData);
+
+        packedData.allocatedData = other.packedData.allocatedData;
+        timeStamp = other.timeStamp;
+        size = other.size;
+        other.size = 0;
+    }
+
     return *this;
 }
 
